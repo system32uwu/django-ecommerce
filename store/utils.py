@@ -1,6 +1,7 @@
 import json
 from .models import *
-
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 def cookieCart(request):
 
@@ -67,22 +68,29 @@ def cartData(request):
 
 
 def guestOrder(request, data):
-    name = data["form"]["name"]
+    username = data["form"]["username"]
     email = data["form"]["email"]
+    password = data["form"]["password"]
 
     cookieData = cookieCart(request)
     items = cookieData["items"]
 
+    User.objects.create_user(username=username,password=password,email=email)
+    
     customer, created = Customer.objects.get_or_create(
         email=email,
     )
-    customer.name = name
+    customer.name = username
     customer.save()
 
     order = Order.objects.create(
         customer=customer,
         complete=False,
     )
+
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request,user)
 
     for item in items:
         product = Product.objects.get(id=item["id"])
