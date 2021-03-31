@@ -17,5 +17,7 @@
 ![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/StoreAddToCartGuest.png)
 
 ## Cart
-![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Checkout1.png)
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Cart.png)
 
+## Checkout
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Checkout1.png)
