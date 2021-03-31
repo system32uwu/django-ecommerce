@@ -1,7 +1,10 @@
-- [ ] Add a notification box when an item gets added to the order (feedback to the user)
+- [ ] Improve feedback (pressing Add to cart makes an effect on the button / shows notification box).
 - [ x ] Add login page
 - [ x ] Add sign-up page
+- [ ] Add paypalTxId field to Order Model
 - [ ] Add Paypal integration
+- [ ] Add profile (list user data + option to update)
+- [ ] Add orders history
 
 Util:
 - https://www.youtube.com/watch?v=Ev5xgwndmfc&list=PLBGbFwiqjPXf_JU9ehryQ6dQ2cjVB9V7o&index=3
