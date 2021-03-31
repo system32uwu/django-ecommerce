@@ -1,5 +1,5 @@
 - [ ] Add a notification box when an item gets added to the order (feedback to the user)
-- [ ] Add login page
+- [ x ] Add login page
 - [ ] Add sign-up page
 - [ ] Add Paypal integration
 
