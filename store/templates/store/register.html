@@ -7,20 +7,32 @@
         <div class="container">
           <div class="row">
             <div class="col-md-9 col-lg-8 mx-auto">
-              <h3 class="login-heading mb-4">Welcome back!</h3>
+              <h3 class="login-heading mb-4">Join Ecom</h3>
               <form id="form">
                 {% csrf_token %}
                 <div class="form-label-group">
                   <input
                     type="username"
                     name="username"
-                    id="inputEmail"
+                    id="inputUsername"
                     class="form-control"
                     placeholder="Username"
                     required
                     autofocus
                   />
-                  <label for="inputEmail">Username</label>
+                  <label for="inputUsername">Username</label>
+                </div>
+                <div class="form-label-group">
+                  <input
+                    type="email"
+                    name="email"
+                    id="inputEmail"
+                    class="form-control"
+                    placeholder="email"
+                    required
+                    autofocus
+                  />
+                  <label for="inputEmail">E-mail</label>
                 </div>
 
                 <div class="form-label-group">
@@ -49,16 +61,11 @@
                   class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2"
                   type="submit"
                 >
-                  Sign in
+                  Sign Up
                 </button>
                 <div class="text-center">
-                  <a class="small" href="/register">Don't have an account? Sign Up</a>
+                  <a class="small" href="/login">Already have an account? Sign In</a>
                 </div>
-                <div
-                  id="errors"
-                  class="hidden box-element"
-                  style="margin-top: 1em"
-                ></div>
               </form>
             </div>
           </div>
@@ -81,13 +88,15 @@
   const sumbitFormData = () => {
     var userFormData = {
       username: null,
+      email: null,
       password: null,
     };
 
     userFormData.username = form.username.value;
+    userFormData.email = form.email.value;
     userFormData.password = form.password.value;
 
-    var url = "/auth/";
+    var url = "/save_user/";
 
     fetch(url, {
       method: "POST",
@@ -102,8 +111,8 @@
       .then((response) => {
         if (response.ok) {
           window.location.href = "{% url 'store'%}";
-        } else {
-          return response.json();
+        }else{
+          return response.json()
         }
       })
       .then((data) => {

@@ -62,8 +62,6 @@ const updateUserOrder = (productId, action) => {
 };
 
 function addCookieItem(product,action) {
-  console.log("User is not authenticated");
-  var row = document.getElementById(`row${product.id}`);
 
   if (action == "add") {
     if (cart[product.id] == undefined) {
@@ -82,7 +80,6 @@ function addCookieItem(product,action) {
       row.remove();
     }
   }
-  console.log("CART:", cart);
   document.cookie = "cart=" + JSON.stringify(cart) + ";domain=;path=/";
 
   totalItems = 0;
@@ -94,6 +91,7 @@ function addCookieItem(product,action) {
   });
   cartTotal.innerHTML = totalItems;
 
+  var row = document.getElementById(`row${product.id}`);
   if (row) {
     var cartItemQuantity = document.getElementById(`q${product.id}`);
     var cartItemTotalPrice = document.getElementById(`t${product.id}`);

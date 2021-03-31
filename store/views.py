@@ -9,7 +9,6 @@ from django.contrib.auth import logout,login, authenticate
 
 
 def store(request):
-    print("store: user is authenticated? " + str(request.user.is_authenticated))
     data = cartData(request)
     cartItems = data["cartItems"]
     order = data["order"]
@@ -88,7 +87,6 @@ def processOrder(request):
     transaction_id = str(uuid.uuid4())
 
     data = json.loads(request.body)
-    print(data)
 
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -104,14 +102,12 @@ def processOrder(request):
 
         errCount = len(errors)
 
-        print("Number of errors: ", errCount)
         if errCount > 0:
             return JsonResponse({"errors": errors}, safe=False)
 
         customer, order = guestOrder(request, data)
         
         login(request,customer.user)
-        print("after login: " + str(request.user.is_authenticated))
 
     total = float(data["form"]["total"])
     order.transaction_id = transaction_id
@@ -153,14 +149,17 @@ def _logout(request):
     return redirect('/')
 
 def _login(request): #/login
-    context = {}
-    return render(request, "store/login.html", context)
+    data = cartData(request)
 
+    cartItems = data["cartItems"]
+    order = data["order"]
+    items = data["items"]
+
+    context = {"items": items, "order": order, "cartItems": cartItems}
+    return render(request, "store/login.html", context)
 
 def _loginEndPoint(request): #/auth
     data = json.loads(request.body)
-    print(data)
-    print('from login endpoint')
     username = data['userFormData']['username']
     password = data['userFormData']['password']
     user = authenticate(username=username,password=password)
@@ -168,4 +167,34 @@ def _loginEndPoint(request): #/auth
         login(request,user)
         return JsonResponse({},status=200)
     else:
-        return JsonResponse({},status=403)
+        return JsonResponse({'errors' : ['Your login credentials are incorrect.']},status=403)
+
+    
+def register(request): #/register
+    data = cartData(request)
+
+    cartItems = data["cartItems"]
+    order = data["order"]
+    items = data["items"]
+
+    context = {"items": items, "order": order, "cartItems": cartItems}
+    return render(request, "store/register.html", context)
+
+def _registerEndPoint(request): #/save_user
+    data = json.loads(request.body)
+    username = data['userFormData']['username']
+    email = data['userFormData']['email']
+    password = data['userFormData']['password']
+
+    errors = []
+    if User.objects.filter(username=username).exists():
+        errors.append("Username already exists.")
+    if User.objects.filter(email=email).exists():
+        errors.append("Email is already in use.")
+
+    errCount = len(errors)
+
+    if errCount > 0:
+        return JsonResponse({"errors": errors}, status=403, safe=False)
+
+    return _loginEndPoint(request)
