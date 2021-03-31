@@ -10,3 +10,12 @@
 
 # Ecom
 
+## Home
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Store.png)
+
+### Adding products to order
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/StoreAddToCartGuest.png)
+
+## Cart
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Checkout1.png)
+
