@@ -80,6 +80,7 @@
           value="Continue"
         />
       </form>
+      <div id="errors" class="hidden box-element" style="margin-top: 1em;"></div>
     </div>
 
     <br />
@@ -130,6 +131,7 @@
   }
 
   var form = document.getElementById("form");
+  var payBtn = document.getElementById("make-payment");
 
   //a guest user in incognito won't this cookie, so we generate it.
   csrftoken = form.getElementsByTagName("input")[0].value;
@@ -137,9 +139,13 @@
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     console.log("form submitted");
-    document.getElementById("form-button").classList.add("hidden");
-    document.getElementById("payment-info").classList.remove("hidden");
     sumbitFormData(e);
+  });
+
+  payBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    console.log("payment submitted");
+    confirmPayment();
   });
 
   const getFormData = () => {
@@ -194,8 +200,24 @@
         if (data.errors) {
           console.log(JSON.stringify(data));
           //set errors in form
+          let errList = document.createElement("ul");
+
+          for (let e of data.errors) {
+            let node = document.createElement("li");
+            node.style.color = "#FF0000";
+            let textNode = document.createTextNode(e);
+            node.appendChild(textNode);
+            errList.appendChild(node);
+          }
+          document.getElementById("errors").appendChild(errList);
+          document.getElementById("errors").classList.remove("hidden");
+
+          document.getElementById("payment-info").classList.add("hidden");
         } else {
+          document.getElementById("errors").classList.add("hidden");
           console.log("Order validated");
+          document.getElementById("form-button").classList.add("hidden");
+          document.getElementById("payment-info").classList.remove("hidden");
         }
       });
   };
@@ -212,7 +234,9 @@
       body: JSON.stringify({
         orderDetails: formData.userFormData,
       }),
-    });
+    })
+    .then((response) => response.json())
+    .then(data => console.log(JSON.stringify(data)));
     cart = {};
     document.cookie = "cart=" + JSON.stringify(cart) + ";domain=;path=/";
     window.location.href = "{% url 'store'%}"; //TODO: return to orders history

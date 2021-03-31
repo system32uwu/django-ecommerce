@@ -1,13 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from .models import *
 import json
 import uuid
 from .utils import *
 from django.contrib.auth.models import User
+from django.contrib.auth import logout,login, authenticate
 
 
 def store(request):
+    print("store: user is authenticated? " + str(request.user.is_authenticated))
     data = cartData(request)
     cartItems = data["cartItems"]
     order = data["order"]
@@ -94,12 +96,11 @@ def processOrder(request):
     else:
         uname = data["form"]["username"]
         email = data["form"]["email"]
-        print(uname, email)
         errors = []
         if User.objects.filter(username=uname).exists():
-            errors.append({"err": "Username already exists."})
+            errors.append("Username already exists.")
         if User.objects.filter(email=email).exists():
-            errors.append({"err": "Email is already in use."})
+            errors.append("Email is already in use.")
 
         errCount = len(errors)
 
@@ -108,6 +109,9 @@ def processOrder(request):
             return JsonResponse({"errors": errors}, safe=False)
 
         customer, order = guestOrder(request, data)
+        
+        login(request,customer.user)
+        print("after login: " + str(request.user.is_authenticated))
 
     total = float(data["form"]["total"])
     order.transaction_id = transaction_id
@@ -141,11 +145,27 @@ def confirmPayment(request):
 
     order.complete = True
     order.save()
-    return JsonResponse(
-        {
-            "id": order.id,
-            "transactionId": order.transaction_id,
-            "completed": order.complete,
-        },
-        safe=False,
-    )
+    
+    return JsonResponse({},status=200)
+
+def _logout(request):
+    logout(request)
+    return redirect('/')
+
+def _login(request): #/login
+    context = {}
+    return render(request, "store/login.html", context)
+
+
+def _loginEndPoint(request): #/auth
+    data = json.loads(request.body)
+    print(data)
+    print('from login endpoint')
+    username = data['userFormData']['username']
+    password = data['userFormData']['password']
+    user = authenticate(username=username,password=password)
+    if user is not None:
+        login(request,user)
+        return JsonResponse({},status=200)
+    else:
+        return JsonResponse({},status=403)

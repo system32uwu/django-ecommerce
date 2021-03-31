@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import include, url
 
 from . import views
 
@@ -9,4 +10,7 @@ urlpatterns = [
     path("update_item/", views.updateItem, name="update_item"),
     path("process_order/", views.processOrder, name="process_order"),
     path("confirm_payment/", views.confirmPayment, name="confirm_payment"),
+    path("login/", views._login, name="login"),
+    path("auth/", views._loginEndPoint, name="auth"),
+    path("logout/", views._logout, name="logout"),
 ]

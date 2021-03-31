@@ -75,12 +75,14 @@ def guestOrder(request, data):
     cookieData = cookieCart(request)
     items = cookieData["items"]
 
-    User.objects.create_user(username=username,password=password,email=email)
+    user = User.objects.create(username=username,password=password,email=email)
     
-    customer, created = Customer.objects.get_or_create(
+    customer = Customer.objects.create(
         email=email,
     )
+    customer.user = user
     customer.name = username
+
     customer.save()
 
     order = Order.objects.create(
@@ -88,17 +90,11 @@ def guestOrder(request, data):
         complete=False,
     )
 
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request,user)
-
     for item in items:
         product = Product.objects.get(id=item["id"])
         orderItem = OrderItem.objects.create(
             product=product,
             order=order,
-            quantity=(
-                item["quantity"] if item["quantity"] > 0 else -1 * item["quantity"]
-            ),  # negative quantity = freebies
+            quantity=item["quantity"]
         )
     return customer, order
