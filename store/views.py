@@ -94,6 +94,8 @@ def processOrder(request):
     else:
         uname = data["form"]["username"]
         email = data["form"]["email"]
+        password = data["form"]["password"]
+
         errors = []
         if User.objects.filter(username=uname).exists():
             errors.append("Username already exists.")
@@ -106,8 +108,11 @@ def processOrder(request):
             return JsonResponse({"errors": errors}, safe=False)
 
         customer, order = guestOrder(request, data)
-        
-        login(request,customer.user)
+
+        if customer.user is not None:
+            login(request,customer.user)
+        else:
+            print("is none")
 
     total = float(data["form"]["total"])
     order.transaction_id = transaction_id
