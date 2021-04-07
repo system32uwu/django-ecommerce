@@ -11,9 +11,7 @@ class Customer(models.Model):
     
     @property
     def get_orders(self):
-        Order.objects.filter(customer=self.customer,complete=True)
-
-
+        return Order.objects.filter(customer=self)
 
 class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
@@ -62,6 +60,10 @@ class Order(models.Model):
                 shipping = True
                 break
         return shipping
+
+    @property
+    def get_items(self):
+        return OrderItem.objects.filter(order=self)
         
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)

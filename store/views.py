@@ -92,8 +92,6 @@ def updateItem(request):
 
 
 def processOrder(request):
-    transaction_id = str(uuid.uuid4())
-
     data = json.loads(request.body)
 
     if request.user.is_authenticated:
@@ -123,7 +121,6 @@ def processOrder(request):
             print("is none")
 
     total = float(data["form"]["total"])
-    order.transaction_id = transaction_id
 
     if total != float(order.get_cart_total):
         err = [{"err": "Your order total value does not match."}]
@@ -142,7 +139,7 @@ def processOrder(request):
         )
 
     return JsonResponse(
-        {"id": order.id, "transactionId": order.transaction_id}, safe=False
+        {"id": order.id}, safe=False
     )
 
 
@@ -151,7 +148,8 @@ def confirmPayment(request):
     # then mark order as completed
     customer = request.user.customer
     order, created = Order.objects.get_or_create(customer=customer, complete=False)
-
+    transaction_id = str(uuid.uuid4())
+    order.transaction_id = transaction_id
     order.complete = True
     order.save()
 

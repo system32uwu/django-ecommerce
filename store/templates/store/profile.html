@@ -24,11 +24,48 @@
       </li>
     </ul>
     <hr />
-    <ul class="list-group">
-      {% for order in user.customer.get_orders %}
-      <li class="list-group-item">order.transaction_id</li>
-      {% endfor %}
-    </ul>
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Transaction ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Order status</th>
+            <th scope="col">Products</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in user.customer.get_orders %}
+          <tr>
+            <th scope="row">{{order.id}}</th>
+            <td>{{order.transaction_id}}</td>
+            <td>{{order.date_ordered}}</td>
+            <td>
+              {% if order.complete %} Completed {% else %} Awaiting payment
+              {%endif %}
+            </td>
+            <td>
+              <ul>
+                {% for orderitem in order.get_items %}
+                <li>
+                  <a href="/product/{{orderitem.product.id}}">{{orderitem.product.name}}</a>
+                  (x{{orderitem.quantity}})
+                </li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
+<style>
+  th,
+  td {
+    text-align: center;
+  }
+</style>
 {% endblock content %}
