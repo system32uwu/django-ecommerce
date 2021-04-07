@@ -1,8 +1,7 @@
-- [ ] Improve feedback (pressing Add to cart makes an effect on the button / shows notification box)
 - [x] Add login page
 - [x] Add sign-up page
 - [x] Add paypalTxId field to Order Model
 - [ ] Add Paypal integration
 - [x] Add profile (list user data + option to update)
-- [ ] Add orders history
+- [x] Add orders history
 - [ ] Make a template for products, so when user presses "View", they can see more details
