@@ -2,7 +2,7 @@ var updateBtns = document.getElementsByClassName("update-cart");
 var cartTotal = document.getElementById("cart-total");
 
 for (i = 0; i < updateBtns.length; i++) {
-  updateBtns[i].addEventListener("click", function () {
+  updateBtns[i].addEventListener("click", () => {
     var productId = this.dataset.product;
     var productPrice = this.dataset.price;
     var action = this.dataset.action;

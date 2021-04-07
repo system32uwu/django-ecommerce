@@ -3,6 +3,6 @@
 - [x] Add sign-up page
 - [x] Add paypalTxId field to Order Model
 - [ ] Add Paypal integration
-- [ ] Add profile (list user data + option to update)
+- [x] Add profile (list user data + option to update)
 - [ ] Add orders history
 - [ ] Make a template for products, so when user presses "View", they can see more details

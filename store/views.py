@@ -6,7 +6,7 @@ import uuid
 from .utils import *
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
-
+from django.http import HttpResponse
 
 def store(request):
     data = cartData(request)
@@ -70,16 +70,7 @@ def updateItem(request):
         orderItem.delete()
         totalValue = 0
         quantity = 0
-
-    print(
-        {
-            "cartTotal": total,
-            "productQuantity": quantity,
-            "orderItemTotalValue": totalValue,
-            "orderTotalValue": orderTotalValue,
-        }
-    )
-
+        
     return JsonResponse(
         {
             "cartTotal": total,
@@ -146,15 +137,17 @@ def processOrder(request):
 def confirmPayment(request):
     # TODO: confirm the transaction with paypal, check if both fields (order.paypalTxId == request.order.paypalTxId) are equal
     # then mark order as completed
-    customer = request.user.customer
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
-    transaction_id = str(uuid.uuid4())
-    order.transaction_id = transaction_id
-    order.complete = True
-    order.save()
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        transaction_id = str(uuid.uuid4())
+        order.transaction_id = transaction_id
+        order.complete = True
+        order.save()
 
-    return JsonResponse({}, status=200)
-
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=403)
 
 def _logout(request):
     logout(request)
@@ -171,7 +164,6 @@ def _login(request):  # /login
     context = {"items": items, "order": order, "cartItems": cartItems}
     return render(request, "store/login.html", context)
 
-
 def _loginEndPoint(request):  # /auth
     data = json.loads(request.body)
     username = data["userFormData"]["username"]
@@ -179,7 +171,7 @@ def _loginEndPoint(request):  # /auth
     user = authenticate(username=username, password=password)
     if user is not None:
         login(request, user)
-        return JsonResponse({}, status=200)
+        return HttpResponse(status=209)
     else:
         return JsonResponse(
             {"errors": ["Your login credentials are incorrect."]}, status=403
@@ -195,7 +187,6 @@ def register(request):  # /register
 
     context = {"items": items, "order": order, "cartItems": cartItems}
     return render(request, "store/register.html", context)
-
 
 def _registerEndPoint(request):  # /save_user
     data = json.loads(request.body)
@@ -227,3 +218,16 @@ def profile(request):  # /profile
 
     context = {"items": items, "order": order, "cartItems": cartItems, "user": user}
     return render(request, "store/profile.html", context)
+
+def updPersonalInfo(request):
+    data = json.loads(request.body)
+    if request.user.is_authenticated:
+        fName = data["fName"]
+        lName = data["lName"]
+        user = User.objects.get(username=request.user.username)
+        user.first_name = fName
+        user.last_name = lName
+        user.save()
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=403)

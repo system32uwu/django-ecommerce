@@ -7,8 +7,12 @@
           <div class="col-sm-3">
             <h6 class="mb-0">Full Name</h6>
           </div>
-          <div class="col-sm-9 text-secondary" contenteditable="true">
-            {{user.first_name}} {{user.last_name}}
+          <div class="col-sm-9 text-secondary">
+            <i id="updFirstName" contenteditable="true">{{user.first_name}}</i>
+            <i id="updLastName" contenteditable="true">{{user.last_name}}</i>
+            <button id="updPersonalInfo" class="btn btn-sm btn-success">
+              <i class="fa fa-check"></i>
+            </button>
           </div>
         </div>
       </li>
@@ -49,7 +53,9 @@
               <ul>
                 {% for orderitem in order.get_items %}
                 <li>
-                  <a href="/product/{{orderitem.product.id}}">{{orderitem.product.name}}</a>
+                  <a href="/product/{{orderitem.product.id}}"
+                    >{{orderitem.product.name}}</a
+                  >
                   (x{{orderitem.quantity}})
                 </li>
                 {% endfor %}
@@ -62,6 +68,28 @@
     </div>
   </div>
 </div>
+<script type="text/javascript">
+  let updFirstName = document.getElementById("updFirstName");
+  let updLastName = document.getElementById("updLastName");
+  let updPersonalInfo = document.getElementById("updPersonalInfo");
+
+  updPersonalInfo.addEventListener("click", () => {
+    let fName = updFirstName.textContent;
+    let lName = updLastName.textContent;
+
+    fetch("/upd_personal_info/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({
+        fName: fName,
+        lName: lName,
+      }),
+    });
+  });
+</script>
 <style>
   th,
   td {
