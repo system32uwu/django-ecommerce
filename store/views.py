@@ -245,4 +245,14 @@ def updEmail(request):
         return HttpResponse(status=200)
     else:
         return HttpResponse(status=403)
-        
+
+def _product(request, productId):
+    data = cartData(request)
+
+    cartItems = data["cartItems"]
+    order = data["order"]
+    items = data["items"]
+    product = Product.objects.get(id=productId)
+
+    context = {"items": items, "order": order, "cartItems": cartItems, "product": product}
+    return render(request, "store/product.html", context)
