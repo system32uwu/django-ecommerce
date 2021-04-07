@@ -231,3 +231,18 @@ def updPersonalInfo(request):
         return HttpResponse(status=200)
     else:
         return HttpResponse(status=403)
+
+def updEmail(request):
+    data = json.loads(request.body)
+    if request.user.is_authenticated:
+        email = data["email"]
+        user = User.objects.get(username=request.user.username)
+        customer = Customer.objects.get(user=user)
+        user.email = email
+        customer.email = email
+        user.save()
+        customer.save()
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=403)
+        

@@ -21,8 +21,11 @@
           <div class="col-sm-3">
             <h6 class="mb-0">Email</h6>
           </div>
-          <div class="col-sm-9 text-secondary" contenteditable="true">
-            {{user.email}}
+          <div class="col-sm-9 text-secondary">
+            <i id="updEmail" contenteditable="true">{{user.email}}</i>
+            <button id="updEmailButton" class="btn btn-sm btn-success">
+              <i class="fa fa-check"></i>
+            </button>
           </div>
         </div>
       </li>
@@ -71,7 +74,9 @@
 <script type="text/javascript">
   let updFirstName = document.getElementById("updFirstName");
   let updLastName = document.getElementById("updLastName");
+  let updEmail = document.getElementById("updEmail");
   let updPersonalInfo = document.getElementById("updPersonalInfo");
+  let updEmailButton = document.getElementById("updEmailButton");
 
   updPersonalInfo.addEventListener("click", () => {
     let fName = updFirstName.textContent;
@@ -86,6 +91,21 @@
       body: JSON.stringify({
         fName: fName,
         lName: lName,
+      }),
+    });
+  });
+
+  updEmailButton.addEventListener("click", () => {
+    let email = updEmail.textContent;
+
+    fetch("/upd_email/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({
+        email: email,
       }),
     });
   });
