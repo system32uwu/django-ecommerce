@@ -1,11 +1,11 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import *
 import json
 import uuid
 from .utils import *
 from django.contrib.auth.models import User
-from django.contrib.auth import logout,login, authenticate
+from django.contrib.auth import logout, login, authenticate
 
 
 def store(request):
@@ -61,16 +61,24 @@ def updateItem(request):
     orderItem.save()
 
     total = order.get_cart_items
-    totalValue = orderItem.get_total
+    totalValue = float(orderItem.get_total)
     quantity = orderItem.quantity
 
     orderTotalValue = float(order.get_cart_total)
 
     if orderItem.quantity <= 0:
         orderItem.delete()
-        total = 0
         totalValue = 0
         quantity = 0
+
+    print(
+        {
+            "cartTotal": total,
+            "productQuantity": quantity,
+            "orderItemTotalValue": totalValue,
+            "orderTotalValue": orderTotalValue,
+        }
+    )
 
     return JsonResponse(
         {
@@ -79,7 +87,7 @@ def updateItem(request):
             "orderItemTotalValue": totalValue,
             "orderTotalValue": orderTotalValue,
         },
-        safe=False
+        safe=False,
     )
 
 
@@ -110,7 +118,7 @@ def processOrder(request):
         customer, order = guestOrder(request, data)
 
         if customer.user is not None:
-            login(request,customer.user)
+            login(request, customer.user)
         else:
             print("is none")
 
@@ -146,14 +154,16 @@ def confirmPayment(request):
 
     order.complete = True
     order.save()
-    
-    return JsonResponse({},status=200)
+
+    return JsonResponse({}, status=200)
+
 
 def _logout(request):
     logout(request)
-    return redirect('/')
+    return redirect("/")
 
-def _login(request): #/login
+
+def _login(request):  # /login
     data = cartData(request)
 
     cartItems = data["cartItems"]
@@ -163,19 +173,22 @@ def _login(request): #/login
     context = {"items": items, "order": order, "cartItems": cartItems}
     return render(request, "store/login.html", context)
 
-def _loginEndPoint(request): #/auth
-    data = json.loads(request.body)
-    username = data['userFormData']['username']
-    password = data['userFormData']['password']
-    user = authenticate(username=username,password=password)
-    if user is not None:
-        login(request,user)
-        return JsonResponse({},status=200)
-    else:
-        return JsonResponse({'errors' : ['Your login credentials are incorrect.']},status=403)
 
-    
-def register(request): #/register
+def _loginEndPoint(request):  # /auth
+    data = json.loads(request.body)
+    username = data["userFormData"]["username"]
+    password = data["userFormData"]["password"]
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return JsonResponse({}, status=200)
+    else:
+        return JsonResponse(
+            {"errors": ["Your login credentials are incorrect."]}, status=403
+        )
+
+
+def register(request):  # /register
     data = cartData(request)
 
     cartItems = data["cartItems"]
@@ -185,11 +198,12 @@ def register(request): #/register
     context = {"items": items, "order": order, "cartItems": cartItems}
     return render(request, "store/register.html", context)
 
-def _registerEndPoint(request): #/save_user
+
+def _registerEndPoint(request):  # /save_user
     data = json.loads(request.body)
-    username = data['userFormData']['username']
-    email = data['userFormData']['email']
-    password = data['userFormData']['password']
+    username = data["userFormData"]["username"]
+    email = data["userFormData"]["email"]
+    password = data["userFormData"]["password"]
 
     errors = []
     if User.objects.filter(username=username).exists():
@@ -204,7 +218,8 @@ def _registerEndPoint(request): #/save_user
 
     return _loginEndPoint(request)
 
-def profile(request): #/profile
+
+def profile(request):  # /profile
     data = cartData(request)
 
     cartItems = data["cartItems"]

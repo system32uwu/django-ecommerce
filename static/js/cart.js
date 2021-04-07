@@ -8,10 +8,13 @@ for (i = 0; i < updateBtns.length; i++) {
     var action = this.dataset.action;
 
     if (user == "AnonymousUser") {
-      addCookieItem({
-        id: productId,
-        price: productPrice
-      }, action);
+      addCookieItem(
+        {
+          id: productId,
+          price: productPrice,
+        },
+        action
+      );
     } else {
       updateUserOrder(productId, action);
     }
@@ -36,32 +39,30 @@ const updateUserOrder = (productId, action) => {
       return response.json();
     })
     .then((data) => {
-      console.log(JSON.stringify(data))
       cartTotal.innerHTML = data.cartTotal;
       var row = document.getElementById(`row${productId}`);
+      var totalItems = document.getElementById(`totalItems`);
+      var totalValue = document.getElementById(`totalValue`);
+
       if (row) {
         if (data.productQuantity <= 0) {
           row.remove();
         } else {
           var cartItemQuantity = document.getElementById(`q${productId}`);
           var cartItemTotalPrice = document.getElementById(`t${productId}`);
-          var totalItems = document.getElementById(`totalItems`);
-          var totalValue = document.getElementById(`totalValue`);
-
-          totalItems.innerHTML = data.cartTotal;
-          totalValue.innerHTML = `$${data.orderTotalValue.toFixed(2)}`;
 
           cartItemQuantity.innerHTML = data.productQuantity;
           cartItemTotalPrice.innerHTML = `$${data.orderItemTotalValue.toFixed(
             2
           )}`;
         }
+        totalItems.innerHTML = data.cartTotal;
+        totalValue.innerHTML = `$${data.orderTotalValue.toFixed(2)}`;
       }
     });
 };
 
-function addCookieItem(product,action) {
-
+function addCookieItem(product, action) {
   if (action == "add") {
     if (cart[product.id] == undefined) {
       cart[product.id] = { quantity: 1, price: product.price };
@@ -101,6 +102,8 @@ function addCookieItem(product,action) {
     totalValueE.innerHTML = `$${totalValue.toFixed(2)}`;
 
     cartItemQuantity.innerHTML = cart[product.id]["quantity"];
-    cartItemTotalPrice.innerHTML = `$${(product.price * parseFloat(cart[product.id]["quantity"])).toFixed(2)}`;
+    cartItemTotalPrice.innerHTML = `$${(
+      product.price * parseFloat(cart[product.id]["quantity"])
+    ).toFixed(2)}`;
   }
 }
