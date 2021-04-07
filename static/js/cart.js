@@ -6,8 +6,6 @@ for (i = 0; i < updateBtns.length; i++) {
     var productId = this.dataset.product;
     var productPrice = this.dataset.price;
     var action = this.dataset.action;
-    console.log("productId:", productId, "Action:", action);
-    console.log("USER:", user);
 
     if (user == "AnonymousUser") {
       addCookieItem({
@@ -15,7 +13,7 @@ for (i = 0; i < updateBtns.length; i++) {
         price: productPrice
       }, action);
     } else {
-      updateUserOrder(product, productPrice, action);
+      updateUserOrder(productId, action);
     }
   });
 }
@@ -38,6 +36,7 @@ const updateUserOrder = (productId, action) => {
       return response.json();
     })
     .then((data) => {
+      console.log(JSON.stringify(data))
       cartTotal.innerHTML = data.cartTotal;
       var row = document.getElementById(`row${productId}`);
       if (row) {

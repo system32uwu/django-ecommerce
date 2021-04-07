@@ -1,0 +1,34 @@
+{% extends 'store/main.html' %} {% load static %} {% block content %}
+<div class="container align-self-center">
+  <div class="main-body align-self-center">
+    <ul class="list-group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">Full Name</h6>
+          </div>
+          <div class="col-sm-9 text-secondary" contenteditable="true">
+            {{user.first_name}} {{user.last_name}}
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">Email</h6>
+          </div>
+          <div class="col-sm-9 text-secondary" contenteditable="true">
+            {{user.email}}
+          </div>
+        </div>
+      </li>
+    </ul>
+    <hr />
+    <ul class="list-group">
+      {% for order in user.customer.get_orders %}
+      <li class="list-group-item">order.transaction_id</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock content %}

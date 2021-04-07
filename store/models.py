@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=200, null=True)
@@ -9,6 +8,11 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def get_orders(self):
+        Order.objects.filter(customer=self.customer,complete=True)
+
 
 
 class Product(models.Model):
@@ -32,6 +36,7 @@ class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=100, null=True)
+    paypalTransactionId = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return str(self.id)

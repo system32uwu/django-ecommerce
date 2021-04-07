@@ -43,7 +43,7 @@ def checkout(request):
 
 def updateItem(request):
     data = json.loads(request.body)
-
+    print(data)
     productId = data["productId"]
     action = data["action"]
 
@@ -79,7 +79,7 @@ def updateItem(request):
             "orderItemTotalValue": totalValue,
             "orderTotalValue": orderTotalValue,
         },
-        safe=False,
+        safe=False
     )
 
 
@@ -203,3 +203,14 @@ def _registerEndPoint(request): #/save_user
         return JsonResponse({"errors": errors}, status=403, safe=False)
 
     return _loginEndPoint(request)
+
+def profile(request): #/profile
+    data = cartData(request)
+
+    cartItems = data["cartItems"]
+    order = data["order"]
+    items = data["items"]
+    user = request.user
+
+    context = {"items": items, "order": order, "cartItems": cartItems, "user": user}
+    return render(request, "store/profile.html", context)
