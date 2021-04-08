@@ -16,8 +16,20 @@
 ### Adding products to order
 ![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/StoreAddToCartGuest.png)
 
+## Product Details
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/ProductDetails.png)
+
 ## Cart
 ![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Cart.png)
 
 ## Checkout
 ![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Checkout1.png)
+
+## Login
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Login.png)
+
+## Register
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Register.png)
+
+## Account
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Account.png)
