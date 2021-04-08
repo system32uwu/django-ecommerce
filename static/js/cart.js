@@ -1,11 +1,11 @@
 var updateBtns = document.getElementsByClassName("update-cart");
 var cartTotal = document.getElementById("cart-total");
 
-for (let i = 0; i < updateBtns.length; i++) {
-  updateBtns[i].addEventListener("click", () => {
-    var productId = updateBtns[i].dataset.product;
-    var productPrice = updateBtns[i].dataset.price;
-    var action = updateBtns[i].dataset.action
+document.querySelectorAll(".update-cart").forEach((btnUpd) => {
+  btnUpd.addEventListener("click", () => {
+    var productId = btnUpd.dataset.product;
+    var productPrice = btnUpd.dataset.price;
+    var action = btnUpd.dataset.action;
 
     if (user == "AnonymousUser") {
       addCookieItem(
@@ -19,7 +19,7 @@ for (let i = 0; i < updateBtns.length; i++) {
       updateUserOrder(productId, action);
     }
   });
-}
+});
 
 const updateUserOrder = (productId, action) => {
   var url = "/update_item/";
@@ -59,8 +59,8 @@ const updateUserOrder = (productId, action) => {
         totalItems.innerHTML = data.cartTotal;
         totalValue.innerHTML = `$${data.orderTotalValue.toFixed(2)}`;
       }
-      if (action == 'buyNow'){
-        window.location.href = '/cart/';
+      if (action == "buyNow") {
+        window.location.href = "/cart/";
       }
     });
 };
@@ -107,10 +107,11 @@ function addCookieItem(product, action) {
     cartItemQuantity.innerHTML = cart[product.id]["quantity"];
     cartItemTotalPrice.innerHTML = `$${(
       product.price * parseFloat(cart[product.id]["quantity"])
-    ).toFixed(2)}`;    
+    ).toFixed(2)}`;
   }
 
-  if (action == "buyNow"){ //buyNow action (redirects to cart)
-    window.location.href = '/cart/';
+  if (action == "buyNow") {
+    //buyNow action (redirects to cart)
+    window.location.href = "/cart/";
   }
 }
