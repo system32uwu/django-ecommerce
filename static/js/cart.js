@@ -1,4 +1,3 @@
-var updateBtns = document.getElementsByClassName("update-cart");
 var cartTotal = document.getElementById("cart-total");
 
 document.querySelectorAll(".update-cart").forEach((btnUpd) => {
