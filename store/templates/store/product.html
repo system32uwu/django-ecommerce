@@ -20,9 +20,9 @@
       <h4>{{ product.name }}</h4>
       <div class="price">
         <span class="mr-2"
-          ><i class="fa fa-rupee text-success"></i>${{product.price}}</span>
-          <!-- <span class="mr-2 cut">65,000</span>
-        <span class="text-success">25% OFF</span> -->
+          ><i class="fa fa-rupee text-success"></i
+          >${{product.price|floatformat:2}}</span
+        >
       </div>
       <div class="d-flex flex-row">
         <div class="icons mr-2">
@@ -84,73 +84,87 @@
         ><span class="ml-2">Sargam Electronics</span>
       </div>
       <div class="mt-3">
-        <button class="btn btn-dark mr-2" type="button">ADD TO CART</button
-        ><button class="btn btn-success" type="button">BUY NOW</button>
+        <button
+          class="btn btn-dark mr-2 update-cart"
+          type="button"
+          data-product="{{ product.id }}"
+          data-price="{{ product.price }}"
+          data-action="add"
+        >
+          ADD TO CART</button
+        ><button
+          class="btn btn-success update-cart"
+          data-product="{{ product.id }}"
+          data-price="{{ product.price }}"
+          data-action="buyNow"
+        >
+          BUY NOW
+        </button>
       </div>
     </div>
   </div>
 </div>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap');
+  @import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap");
 
-body {
+  body {
     background: #fff;
-    font-family: 'Roboto Condensed', sans-serif
-}
+    font-family: "Roboto Condensed", sans-serif;
+  }
 
-.carousel-item {
-    width: 100%
-}
+  .carousel-item {
+    width: 100%;
+  }
 
-.price span {
-    font-size: 18px
-}
+  .price span {
+    font-size: 18px;
+  }
 
-.cut {
+  .cut {
     text-decoration: line-through;
-    color: red
-}
+    color: red;
+  }
 
-.icons i {
+  .icons i {
     font-size: 17px;
     color: green;
-    margin-right: 2px
-}
+    margin-right: 2px;
+  }
 
-.offers i {
-    color: green
-}
+  .offers i {
+    color: green;
+  }
 
-.delivery i {
-    color: blue
-}
+  .delivery i {
+    color: blue;
+  }
 
-label.radio {
-    cursor: pointer
-}
+  label.radio {
+    cursor: pointer;
+  }
 
-label.radio input {
+  label.radio input {
     position: absolute;
     top: 0;
     left: 0;
     visibility: hidden;
-    pointer-events: none
-}
+    pointer-events: none;
+  }
 
-label.radio span {
+  label.radio span {
     padding: 2px 11px;
     margin-right: 3px;
     border: 1px solid #8f37aa;
     display: inline-block;
     color: #8f37aa;
     border-radius: 3px;
-    text-transform: uppercase
-}
+    text-transform: uppercase;
+  }
 
-label.radio input:checked+span {
+  label.radio input:checked + span {
     border-color: #8f37aa;
     background-color: #8f37aa;
-    color: #fff
-}
+    color: #fff;
+  }
 </style>
 {% endblock content %}

@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
 from django.http import HttpResponse
 
+
 def store(request):
     data = cartData(request)
     cartItems = data["cartItems"]
@@ -53,7 +54,7 @@ def updateItem(request):
 
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-    if action == "add":
+    if action == "add" or action == "buyNow":
         orderItem.quantity += 1
     elif action == "remove":
         orderItem.quantity -= 1
@@ -70,14 +71,16 @@ def updateItem(request):
         orderItem.delete()
         totalValue = 0
         quantity = 0
-        
+
+    data = {
+        "cartTotal": total,
+        "productQuantity": quantity,
+        "orderItemTotalValue": totalValue,
+        "orderTotalValue": orderTotalValue,
+    }
+    
     return JsonResponse(
-        {
-            "cartTotal": total,
-            "productQuantity": quantity,
-            "orderItemTotalValue": totalValue,
-            "orderTotalValue": orderTotalValue,
-        },
+        data=data,
         safe=False,
     )
 
@@ -129,9 +132,7 @@ def processOrder(request):
             zipcode=data["shipping"]["zipcode"],
         )
 
-    return JsonResponse(
-        {"id": order.id}, safe=False
-    )
+    return JsonResponse({"id": order.id}, safe=False)
 
 
 def confirmPayment(request):
@@ -149,9 +150,10 @@ def confirmPayment(request):
     else:
         return HttpResponse(status=403)
 
+
 def _logout(request):
     logout(request)
-    return redirect("/")
+    return redirect("store")
 
 
 def _login(request):  # /login
@@ -163,6 +165,7 @@ def _login(request):  # /login
 
     context = {"items": items, "order": order, "cartItems": cartItems}
     return render(request, "store/login.html", context)
+
 
 def _loginEndPoint(request):  # /auth
     data = json.loads(request.body)
@@ -187,6 +190,7 @@ def register(request):  # /register
 
     context = {"items": items, "order": order, "cartItems": cartItems}
     return render(request, "store/register.html", context)
+
 
 def _registerEndPoint(request):  # /save_user
     data = json.loads(request.body)
@@ -219,6 +223,7 @@ def profile(request):  # /profile
     context = {"items": items, "order": order, "cartItems": cartItems, "user": user}
     return render(request, "store/profile.html", context)
 
+
 def updPersonalInfo(request):
     data = json.loads(request.body)
     if request.user.is_authenticated:
@@ -231,6 +236,7 @@ def updPersonalInfo(request):
         return HttpResponse(status=200)
     else:
         return HttpResponse(status=403)
+
 
 def updEmail(request):
     data = json.loads(request.body)
@@ -246,6 +252,7 @@ def updEmail(request):
     else:
         return HttpResponse(status=403)
 
+
 def _product(request, productId):
     data = cartData(request)
 
@@ -254,5 +261,10 @@ def _product(request, productId):
     items = data["items"]
     product = Product.objects.get(id=productId)
 
-    context = {"items": items, "order": order, "cartItems": cartItems, "product": product}
+    context = {
+        "items": items,
+        "order": order,
+        "cartItems": cartItems,
+        "product": product,
+    }
     return render(request, "store/product.html", context)
