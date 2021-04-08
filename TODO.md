@@ -2,6 +2,8 @@
 - [x] Add sign-up page
 - [x] Add paypalTxId field to Order Model
 - [ ] Add Paypal integration
+- [ ] Add more data to product (brand, model, times bought)
+- [ ] Add star rating system to products that have been bought by user
 - [x] Add profile (list user data + option to update)
 - [x] Add orders history
 - [x] Make a template for products, so when user presses "View", they can see more details
