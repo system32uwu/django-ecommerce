@@ -44,6 +44,7 @@
         </thead>
         <tbody>
           {% for order in user.customer.get_orders %}
+          {% if order.get_cart_items > 0 %}
           <tr>
             <th scope="row">{{order.id}}</th>
             <td>{{order.transaction_id}}</td>
@@ -65,6 +66,7 @@
               </ul>
             </td>
           </tr>
+          {% endif %}
           {% endfor %}
         </tbody>
       </table>

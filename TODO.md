@@ -4,4 +4,4 @@
 - [ ] Add Paypal integration
 - [x] Add profile (list user data + option to update)
 - [x] Add orders history
-- [ ] Make a template for products, so when user presses "View", they can see more details
+- [x] Make a template for products, so when user presses "View", they can see more details
