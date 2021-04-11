@@ -60,6 +60,10 @@ Install Django
 ```python
 pip install django django
 ```
+Create a super user
+```python
+python mange.py createsuperuser
+```
 Make [migrations](https://www.alooma.com/blog/what-is-database-migration) based on the [models](https://github.com/system32uwu/django-ecommerce/blob/main/store/models.py) defined. This will genreate a file that will be translated to SQL statements and will alter the database.
 ```python
 python mange.py makemigrations
