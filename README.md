@@ -68,7 +68,7 @@ Make the migration effective
 ```python
 python mange.py migrate
 ```
-Run Django app (open http:localhost:8000 in your browser).
+Run Django app (open http://localhost:8000 in your browser).
 ```python
 python mange.py runserver
 ```
