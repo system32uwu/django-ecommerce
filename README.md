@@ -36,11 +36,11 @@ Most of what's in the project was done following [Dennis Ivy's Django Ecommerce 
 
 ## Checkout
 
-![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/PayPalCheckout.png)
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/PaypalCheckout.png)
 
 ## PayPal Integration
 
-![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/PayPalCheckout2.png)
+![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/PaypalCheckout2.png)
 
 ## Login
 
