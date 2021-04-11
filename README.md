@@ -56,6 +56,22 @@ Most of what's in the project was done following [Dennis Ivy's Django Ecommerce 
 
 # Run It
 
+Install Django
+```python
+pip install django django
+```
+Make [migrations](https://www.alooma.com/blog/what-is-database-migration) based on the [models](https://github.com/system32uwu/django-ecommerce/blob/main/store/models.py) defined. This will genreate a file that will be translated to SQL statements and will alter the database.
+```python
+python mange.py makemigrations
+```
+Make the migration effective
+```python
+python mange.py migrate
+```
+Run Django app (open http:localhost:8000 in your browser).
+```python
+python mange.py runserver
+```
 ## Requirements
 
 - Python >= 3.9.2
