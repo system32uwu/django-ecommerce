@@ -54,3 +54,16 @@ Most of what's in the project was done following [Dennis Ivy's Django Ecommerce 
 ## Account
 
 ![](https://raw.githubusercontent.com/system32uwu/django-ecommerce/main/screenshots/Account.png)
+
+# Run It
+
+## Requirements
+
+- Python >= 3.9.2
+- Django >= 3.1.7 (I recommend setting up a virtual environment).
+
+## Additional notes
+
+- You'll need to input products with the GUI in /admin
+
+- There's no need to setup any DB configuration since this was done using sqlite.
