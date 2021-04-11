@@ -58,7 +58,7 @@ Most of what's in the project was done following [Dennis Ivy's Django Ecommerce 
 
 Install Django
 ```python
-pip install django django
+pip install django
 ```
 Create a super user
 ```python
