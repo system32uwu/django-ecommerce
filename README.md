@@ -12,8 +12,7 @@
 - View orders history
 - Guest user's cart is persisted in cookies, when checking out gets asked to register an account in order to proceed with payment
 - Show errors in forms
-- Paypal integration (pending)
-- Star rating system (pending)
+- Paypal integration
 
 Most of what's in the project was done following [Dennis Ivy's Django Ecommerce Website series](https://www.youtube.com/watch?v=_ELCMngbM0E&list=PL-51WBLyFTg0omnamUjL1TCVov7yDTRng), I added some more functionality that he didn't include (authentication, account section, orders history, update user data, refresh cart items without reloading the page, and many more enhancements).
 
