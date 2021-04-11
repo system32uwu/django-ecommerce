@@ -1,6 +1,6 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %}
 <div class="row">
-  <div class="col-lg-6">
+  <div id="form-div" class="col-lg-6">
     <div class="box-element" id="form-wrapper">
       <form id="form">
         {% csrf_token %}
@@ -33,63 +33,20 @@
             />
           </div>
         </div>
-
-        <div id="shipping-info">
-          <hr />
-          <p>Shipping Information:</p>
-          <hr />
-          <div class="form-field">
-            <input
-              class="form-control"
-              type="text"
-              name="address"
-              placeholder="Address.."
-            />
-          </div>
-          <div class="form-field">
-            <input
-              class="form-control"
-              type="text"
-              name="city"
-              placeholder="City.."
-            />
-          </div>
-          <div class="form-field">
-            <input
-              class="form-control"
-              type="text"
-              name="state"
-              placeholder="State.."
-            />
-          </div>
-          <div class="form-field">
-            <input
-              class="form-control"
-              type="text"
-              name="zipcode"
-              placeholder="Zip code.."
-            />
-          </div>
-        </div>
-
-        <hr />
         <input
           id="form-button"
           class="btn btn-success btn-block"
           type="submit"
           value="Continue"
         />
+        <div
+          id="errors"
+          class="hidden box-element"
+          style="margin-top: 1em"
+        ></div>
       </form>
-      <div id="errors" class="hidden box-element" style="margin-top: 1em;"></div>
-    </div>
-
-    <br />
-    <div class="box-element hidden" id="payment-info">
-      <small>Paypal Options</small>
-      <button id="make-payment">Make payment</button>
     </div>
   </div>
-
   <div class="col-lg-6">
     <div class="box-element">
       <a class="btn btn-outline-dark" href="{% url 'cart' %}"
@@ -103,50 +60,101 @@
         <div style="flex: 2">
           <img class="row-image" src="{{ item.product.imageURL }}" />
         </div>
-        <div style="flex: 2"><p>{{item.product.name}}</p></div>
-        <div style="flex: 1"><p>${{item.product.price}}</p></div>
-        <div style="flex: 1"><p>{{item.quantity}}</p></div>
+        <div style="flex: 2">
+          <p>{{item.product.name}}</p>
+        </div>
+        <div style="flex: 1">
+          <p>${{item.product.price}}</p>
+        </div>
+        <div style="flex: 1">
+          <p>{{item.quantity}}</p>
+        </div>
       </div>
       {% endfor %}
       <h5>Items: {{order.get_cart_items}}</h5>
       <h5>Total: ${{order.get_cart_total|floatformat:2}}</h5>
     </div>
+    <div class="box-element hidden" id="payment-info">
+      <small>Paypal Options</small>
+      <!-- Set up a container element for the button -->
+      <div id="paypal-button-container"></div>
+    </div>
   </div>
 </div>
+
+<!-- paypal stuff -->
+<script src="https://www.paypal.com/sdk/js?client-id=AcyN4KiD3O8HH0vWQvuPNoudyt55EvORPqQcG5sx3JYVPTqWHHZQXMvW3lTQhYk2l8IewTS00aX4_9YN&currency=USD"></script>
+
 <script type="text/javascript">
-  var shipping = "{{ order.shipping }}";
+  var total = "{{get_cart_total}}";
+
+  // Render the PayPal button into #paypal-button-container
+  paypal
+    .Buttons({
+      //styling
+      style: {
+        color: "blue",
+        shape: "rect",
+      },
+      // Set up the transaction
+      createOrder: function (data, actions) {
+        return actions.order.create({
+          purchase_units: [
+            {
+              amount: {
+                value: parseFloat(total).toFixed(2),
+              },
+            },
+          ],
+        });
+      },
+
+      // Finalize the transaction
+      onApprove: (data, actions) => {
+        actions.order.capture().then((details) => {
+          console.log(JSON.stringify(details));
+          var url = "/confirm_payment/";
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify({
+              paypalTxId: data.orderID,
+              shippingInfo: details.purchase_units[0].shipping,
+            }),
+          }).then((response) => {
+            if (response.ok) {
+              cart = {};
+              document.cookie =
+                "cart=" + JSON.stringify(cart) + ";domain=;path=/";
+              window.location.href = "{% url 'profile'%}";
+            } else {
+              console.log("error");
+            }
+          });
+        });
+      },
+    })
+    .render("#paypal-button-container");
+</script>
+
+<script type="text/javascript">
   var total = "{{ order.get_cart_total }}";
-
-  if (shipping == "False") {
-    document.getElementById("shipping-info").innerHTML = "";
-  }
-
-  if (user != "AnonymousUser") {
-    document.getElementById("user-info").innerHTML = "";
-  }
-
-  if (shipping == "False" && user != "AnonymousUser") {
-    document.getElementById("form-wrapper").classList.add("hidden");
-    document.getElementById("payment-info").classList.remove("hidden");
-  }
-
   var form = document.getElementById("form");
-  var payBtn = document.getElementById("make-payment");
 
-  //a guest user in incognito won't this cookie, so we generate it.
-  csrftoken = form.getElementsByTagName("input")[0].value;
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    console.log("form submitted");
-    sumbitFormData(e);
-  });
-
-  payBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    console.log("payment submitted");
-    confirmPayment();
-  });
+  if (user !== "AnonymousUser") {
+    document.getElementById("payment-info").classList.remove("hidden");
+    document.getElementById("form-div").remove(); //remove authentication form if already logged in.
+  } else {
+    //a guest user in incognito won't this cookie, so we generate it.
+    csrftoken = form.getElementsByTagName("input")[0].value;
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      sumbitFormData(e);
+    });
+  }
 
   const getFormData = () => {
     var userFormData = {
@@ -156,31 +164,17 @@
       total: total,
     };
 
-    var shippingInfo = {
-      address: null,
-      city: null,
-      state: null,
-      zipcode: null,
-    };
-
-    if (shipping != "False") {
-      shippingInfo.address = form.address.value;
-      shippingInfo.city = form.city.value;
-      shippingInfo.state = form.state.value;
-      shippingInfo.zipcode = form.zipcode.value;
-    }
-
     if (user == "AnonymousUser") {
       userFormData.username = form.username.value;
       userFormData.email = form.email.value;
       userFormData.password = form.password.value;
     }
 
-    return { userFormData: userFormData, shippingInfo: shippingInfo };
+    return userFormData;
   };
 
   const sumbitFormData = () => {
-    formData = getFormData();
+    userFormData = getFormData();
 
     var url = "/process_order/";
 
@@ -191,8 +185,7 @@
         "X-CSRFToken": csrftoken,
       },
       body: JSON.stringify({
-        form: formData.userFormData,
-        shipping: formData.shippingInfo,
+        form: userFormData,
       }),
     })
       .then((response) => response.json())
@@ -211,36 +204,11 @@
           }
           document.getElementById("errors").appendChild(errList);
           document.getElementById("errors").classList.remove("hidden");
-
           document.getElementById("payment-info").classList.add("hidden");
         } else {
-          location.reload()
-          document.getElementById("errors").classList.add("hidden");
-          console.log("Order validated");
-          document.getElementById("form-button").classList.add("hidden");
-          document.getElementById("payment-info").classList.remove("hidden");
+          location.reload(); //reload to authenticate automatically and proceed with payment
         }
       });
-  };
-
-  const confirmPayment = () => {
-    formData = getFormData();
-    var url = "/confirm_payment/";
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrftoken,
-      },
-      body: JSON.stringify({
-        orderDetails: formData.userFormData,
-      }),
-    })
-    .then((response) => response.json())
-    .then(data => console.log(JSON.stringify(data)));
-    cart = {};
-    document.cookie = "cart=" + JSON.stringify(cart) + ";domain=;path=/";
-    window.location.href = "{% url 'store'%}"; //TODO: return to orders history
   };
 </script>
 {% endblock content %}

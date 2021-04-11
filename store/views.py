@@ -44,7 +44,6 @@ def checkout(request):
 
 def updateItem(request):
     data = json.loads(request.body)
-    print(data)
     productId = data["productId"]
     action = data["action"]
 
@@ -78,7 +77,7 @@ def updateItem(request):
         "orderItemTotalValue": totalValue,
         "orderTotalValue": orderTotalValue,
     }
-    
+
     return JsonResponse(
         data=data,
         safe=False,
@@ -105,7 +104,7 @@ def processOrder(request):
         errCount = len(errors)
 
         if errCount > 0:
-            return JsonResponse({"errors": errors}, safe=False)
+            return JsonResponse({"errors": errors}, safe=False,status=403)
 
         customer, order = guestOrder(request, data)
 
@@ -117,33 +116,35 @@ def processOrder(request):
     total = float(data["form"]["total"])
 
     if total != float(order.get_cart_total):
-        err = [{"err": "Your order total value does not match."}]
-        return JsonResponse({"errors": [err]}, safe=False)
+        err = {"err": "Your order total value does not match."}
+        return JsonResponse({"errors": [err]}, safe=False, status=403)
 
     order.save()
-
-    if order.shipping == True:
-        ShippingAddress.objects.create(
-            customer=customer,
-            order=order,
-            address=data["shipping"]["address"],
-            city=data["shipping"]["city"],
-            state=data["shipping"]["state"],
-            zipcode=data["shipping"]["zipcode"],
-        )
 
     return JsonResponse({"id": order.id}, safe=False)
 
 
 def confirmPayment(request):
-    # TODO: confirm the transaction with paypal, check if both fields (order.paypalTxId == request.order.paypalTxId) are equal
-    # then mark order as completed
+    data = json.loads(request.body)
+
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         transaction_id = str(uuid.uuid4())
         order.transaction_id = transaction_id
+        order.paypalTransactionId = data["paypalTxId"]
         order.complete = True
+
+        if order.shipping == True:
+            ShippingAddress.objects.create(
+                customer=customer,
+                order=order,
+                address=data["shippingInfo"]["address"]["address_line_1"],
+                city=data["shippingInfo"]["address"]["admin_area_2"],
+                state=data["shippingInfo"]["address"]["admin_area_1"],
+                zipcode=data["shippingInfo"]["address"]["postal_code"],
+                countrycode=data["shippingInfo"]["address"]["country_code"],
+            )
         order.save()
 
         return HttpResponse(status=200)
