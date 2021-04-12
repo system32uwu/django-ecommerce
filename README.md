@@ -62,19 +62,19 @@ pip install django
 ```
 Create a super user
 ```python
-python mange.py createsuperuser
+python manage.py createsuperuser
 ```
 Make [migrations](https://www.alooma.com/blog/what-is-database-migration) based on the [models](https://github.com/system32uwu/django-ecommerce/blob/main/store/models.py) defined. This will genreate a file that will be translated to SQL statements and will alter the database.
 ```python
-python mange.py makemigrations
+python manage.py makemigrations
 ```
 Make the migration effective
 ```python
-python mange.py migrate
+python manage.py migrate
 ```
 Run Django app (open http://localhost:8000 in your browser).
 ```python
-python mange.py runserver
+python manage.py runserver
 ```
 ## Requirements
 
